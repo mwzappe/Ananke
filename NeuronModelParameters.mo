@@ -18,19 +18,28 @@ final record NeuronModelParameters "Parameters for the neuron model"
   constant SI.Voltage mV = 1e-3;
 */
   // Reset units to SENN defaults
+  // SENN -> J K-1 mol-1 (?), mJ K-1 mmol-1
   constant Real R = 8.3144;
-  constant Real F = 96.487;
+  constant SI.Charge C = 1;
   constant SI.AmountOfSubstance mol = 1e3;
   constant SI.AmountOfSubstance mmol = 1;
-  constant SI.Volume L = 1;
+  // Faraday ->  96485.33212... C mol−1
+  // SENN -> 96.487 C mmol-1
+  constant Real F = Modelica.Constants.F * C / mol;
   constant SI.Length cm = 1;
   constant SI.Length um = 1e-4;
-  constant SI.Area cm2 = 1;
+  constant SI.Area cm2 = cm ^ 2;
+  constant SI.Volume L = 1000.0 * cm ^ 3;
   constant SI.Capacitance uF = 1;
   constant SI.Resistance Ohm = 1;
+  constant SI.Current A = 1e3;
+  constant SI.Current mA = 1;
+  constant SI.Voltage V = 1e3;
+  constant SI.Voltage mV = 1;
   constant SI.Conductance mS = 1;
   constant SI.Temperature T = 295.16;
-  constant SI.Voltage mV = 1;
+  constant SI.Time s = 1;
+  constant SI.Time ms = 1e-3;
   // Diameter of the nerve fiber
   parameter SI.Length fiber_diameter = 0.002 * cm;
   // Resitivity of the axoplasm
@@ -50,11 +59,11 @@ final record NeuronModelParameters "Parameters for the neuron model"
   // Resting potential;
   constant SI.Voltage Vr = -70 * mV;
   // Base Sodium Permeability constant
-  constant SI.Velocity basePNAB = 8e-3 * cm;
+  constant SI.Velocity basePNAB = 8e-3 * cm / s;
   // Base Potassium Permeability constant
-  constant SI.Velocity PKB = 1.2e-3 * cm;
+  constant SI.Velocity PKB = 1.2e-3 * cm / s;
   // Base non-specific permeability constant
-  constant SI.Velocity PPB = 0.54e-3 * cm;
+  constant SI.Velocity PPB = 0.54e-3 * cm / s;
   // Equilibrium leak potential
   constant SI.Voltage Vl = 0.026 * mV;
   // External Sodium concentration
@@ -69,13 +78,19 @@ final record NeuronModelParameters "Parameters for the neuron model"
   parameter SI.Voltage Vth = 80 * mV;
   parameter Boolean simulate_body = false;
   parameter Integer Nnodes = 51;
+  // SENN -> cm
   SI.Length axon_diameter = fiber_diameter * axon_fiber_ratio;
+  // SENN -> cm^2
   SI.Area node_area = pi * intranodal_gap * axon_diameter;
+  // SENN -> uF/cm^2 * cm^2 -> uF
   SI.Capacitance Cm = membrane_capacitance_per_area * node_area;
+  // SENN -> mS/cm^2 * cm^2 -> mS
   SI.Conductance Gm = leak_conductance_per_area * node_area;
+  // Gm doesn't factor into normal nodes
+  // SENN -> 1000.0 * pi * cm^2 / (4 * Ohm * cm * cm) -> 1000.0 * S -> mS
   SI.Conductance Ga = 1000.0 * pi * axon_diameter ^ 2 / (4 * axoplasm_resistivity * internodal_distance);
   // SENN has 1000 mult that makes little sense
-  Real Gl = leak_conductance_per_area * pi * axon_diameter * intranodal_gap;
+  // SENN -> (C mmol-1) / (mJ K-1 mmol-1) / K -> C / mJ -> mV-1
   Real FRT = F / R / T;
   annotation(Diagram(coordinateSystem(extent = {{-150, -90}, {150, 90}}, preserveAspectRatio = true, initialScale = 0.1, grid = {5, 5})), Icon(coordinateSystem(extent = {{-100, -100}, {100, 100}}, preserveAspectRatio = true, initialScale = 0.1, grid = {10, 10}), graphics = {Text(visible = true, textColor = {64, 64, 64}, extent = {{-150, 60}, {150, 100}}, textString = "%name"), Rectangle(visible = true, origin = {0, -25}, lineColor = {0, 114, 195}, fillColor = {128, 202, 255}, fillPattern = FillPattern.Solid, extent = {{-100, -75}, {100, 75}}, radius = 10), Line(visible = true, points = {{-100, 0}, {100, 0}}, color = {0, 127, 255}), Line(visible = true, origin = {0, -50}, points = {{-100, 0}, {100, 0}}, color = {0, 127, 255}), Line(visible = true, origin = {0, -25}, points = {{0, 75}, {0, -75}}, color = {0, 127, 255})}));
 end NeuronModelParameters;

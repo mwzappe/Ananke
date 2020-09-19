@@ -97,15 +97,28 @@ model Neuron "Model of a neuron"
       Vtot = V + Ve;
       linear_ionic = params.Gm * V;
       // Linear model
+      // FRT->mV-1
       EFRT = (V + params.Vr) * params.FRT;
+      // Unitless
       ex = exp(EFRT);
+      // SENN -> C mmol-1
       b = EFRT * params.F / (1 - ex);
-      I_Na = 1000.0 * PNAB * h.value * m.value ^ 2 * b * (params.C_Na_e - params.C_Na_i * ex);
-      I_K = 1000.0 * params.PKB * n.value ^ 2 * b * (params.C_K_e - params.C_K_i * ex);
-      I_P = 1000.0 * params.PPB * p.value ^ 2 * b * (params.C_Na_e - params.C_Na_i * ex);
+      // SENN -> 1000.0 * (cm s-1) (C mmol-1) (mmol L-1) *NOTE* L wasn't accounted for so this is 1000x
+      // So add another 1000.0 to each of these to account for the fix to the Liter unit
+      // 1000.0 * 1000.0 * (cm s-1) (C mmol-1) (mmol L-1) -> 1e6 (cm s-1) (C 1e-3 cm-3) -> 1e6 (C s-1) (1e-3 cm-2) -> uA / (1e-3 cm-2)
+      // However, this *still* doesn't quite work right, it should be uA cm-2
+      // But the permeability constant is given in cm s-1, when the time unit is ms, so....
+      // 1e6 (C 1000 ms) -> 1e9/1e3->1e6, ergo uA/cm-2
+      I_Na = 1000.0 * 1000.0 * PNAB * h.value * m.value ^ 2 * b * (params.C_Na_e - params.C_Na_i * ex);
+      I_K = 1000.0 * 1000.0 * params.PKB * n.value ^ 2 * b * (params.C_K_e - params.C_K_i * ex);
+      I_P = 1000.0 * 1000.0 * params.PPB * p.value ^ 2 * b * (params.C_Na_e - params.C_Na_i * ex);
+      // SENN -> mS cm-2 mV -> uA cm-2
       I_L = params.leak_conductance_per_area * (V - params.Vl);
+      // SENN -> mA cm-2
       total_ionic = I_Na + I_K + I_P + I_L;
+      // SENN -> mS mV -> uA
       tim = params.Ga * (right - 2 * Vtot + left);
+      // SENN -> (mA - cm2 * (mA cm-2)) / uF -> 1e6 V/s
       der(V) = (tim - params.node_area * total_ionic) / params.Cm;
     end Node;
 
