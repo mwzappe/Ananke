@@ -1,2 +1,3 @@
 # Ananke
-Neural Simulation Model written in Modelica
+A reimplementation of the SENN neural stimulation model written in Modelica.
+
