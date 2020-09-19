@@ -42,7 +42,7 @@ final record NeuronModelParameters "Parameters for the neuron model"
   // Leak conductance per unit area
   parameter Real leak_conductance_per_area = 30.365 * mS / cm2;
   // Width of the Nodes of Ranvenier
-  parameter SI.Length intranodal_gap = 25 * um;
+  parameter SI.Length intranodal_gap = 2.5 * um;
   // Distance between nodes as a ratio to the fiber diameter
   parameter SI.Length internodal_distance = 100 * fiber_diameter;
   // Ratio of the axon diameter to the fiber diameter

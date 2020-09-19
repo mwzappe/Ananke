@@ -10,6 +10,7 @@ C  SUBROUTINE RKGS. (FOR REFERENCE, OUTPUT FILE XYINTERP HAS THE FULL  *
 C  TWO-DIMENSIONAL INTERPOLATED ARRAY, WITH RELATIVE X VALUES, AS      *
 C  FORMED BY THIS SUBROUTINE.)                                         *
 C***********************************************************************
+C      include "common.f"
       REAL*4 XIN(LENIN),YIN(LENIN),XCAL(LENOT),YCAL(LENOT),
      &YINTERP(LENOT),B,M,DELTX
       INTEGER*4 I,J,NTRP,LENIN,LENOT

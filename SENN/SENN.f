@@ -50,6 +50,11 @@ C       299 interpolated points (between consecutive input points) in IWAVE = 13
       OPEN(UNIT=66,FILE='data.out',FORM='FORMATTED',
      &STATUS = 'UNKNOWN')  ! L.S. 'NEW' changed to Absoft 'UNKNOWN' 12/4/01
 
+      OPEN(UNIT=77,FILE='midnode',
+     &STATUS = 'UNKNOWN')  ! L.S. 'NEW' changed to Absoft 'UNKNOWN' 12/4/01
+
+      WRITE(77,*) "TIME,Y,dY/dt,TIM,UINA,UIK,UIP,UIL,h,dh/dt,m,",
+     &"dm/dt,p,dp/dt,n,dn/dt"
 C CONSTANTS FOR THE IONIC COMPONENT EQUATIONS OF TRANSMEMBRANE CURRENT
 C AS GIVEN IN McNEAL (1976, p 336) 
 
@@ -619,7 +624,7 @@ C     MPN=10 ! MAX # OF PRINTABLE NODES STARTING WITH NODE1 ! added 1  12/26/08
 
 C WRITE OUT THE PARAMETERS USED FOR THIS RUN
 
-  500 FORMAT(1H ,///,5X,'XC(CM)',1X,F10.4,13X,'DT(ms)',9X,F10.5,13X,
+  500 FORMAT(1H ,///,5X,'XC(CM)',1X,ES10.4,13X,'DT(ms)',9X,ES10.5,13X,
      1       'NON',4X,I3)
   501 FORMAT(1H ,4X,'YC    ',1X,F10.4,13X,'PD(ms)',9X,F10.4,13X,
      1'NLIN1,2',I3,','I3)

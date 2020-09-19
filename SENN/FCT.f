@@ -388,13 +388,26 @@ C       EFRT = 174.6
 C       WRITE(*,*)'EFRT',EFRT,' Y(I)',Y(I)
    44   EX=EXP(EFRT)
         DEN=1.-EX
+
+        VALH(K)=Y(L+1)
+        VALM(K)=Y(L+2)
+        VALP(K)=Y(L+3)
+        VALN(K)=Y(L+4)
+        
+        DERH(K)=DERY(L+1)
+        DERM(K)=DERY(L+2)
+        DERP(K)=DERY(L+3)
+        DERN(K)=DERY(L+4)
+        
         PNA=PNAB*Y(L+1)*Y(L+2)**2
         PP=PPB*Y(L+3)**2
         PK=PKB*Y(L+4)**2
+        
         UINA(k)=PNA*EFRT2*(SODO-SODI*EX)/DEN*1000. !Ina
         UIK(k)=PK*EFRT2*(POTO-POTI*EX)/DEN*1000.   !Ik
         UIP(k)=PP*EFRT2*(SODO-SODI*EX)/DEN*1000.   !Ip
-        UIL(k)=GL*(Y(K)-VL)                        !Il
+        UIL(k)=GL*(Y(K)-VL)     !Il
+        
         SUMK(K)=UINA(K)+UIK(K)+UIP(K)+UIL(K)
         J=J +1
 C     dVn/dt per equation (9), McNeal, for non-linear nodes

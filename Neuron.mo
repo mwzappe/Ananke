@@ -30,7 +30,6 @@ model Neuron "Model of a neuron"
       SI.Current linear_ionic;
       Real PNAB = params.leak_conductance_per_area / 30.365 * params.basePNAB;
       Real EFRT;
-      Real EFRT2;
 
       model perm_param_form_1
         input Real a0, a1, a2;
@@ -77,7 +76,7 @@ model Neuron "Model of a neuron"
       end perm_param2;
 
       perm_param m(name = "m", a0 = 0.36, a1 = V - 22, a2 = 3, b0 = 0.4, b1 = 13 - V, b2 = 20);
-      perm_param2 h(name = "h", a0 = 0.1, a1 = (-10) - V, a2 = 6, b0 = 4.5, b1 = V - 45, b2 = 10);
+      perm_param2 h(name = "h", a0 = 0.1, a1 = (-10) - V, a2 = 6, b0 = 4.5, b1 = 45 - V, b2 = 10);
       perm_param n(name = "n", a0 = 0.02, a1 = V - 35, a2 = 10, b0 = 0.05, b1 = 10 - V, b2 = 10);
       perm_param p(name = "p", a0 = 0.006, a1 = V - 40, a2 = 10, b0 = 0.09, b1 = (-25) - V, b2 = 20);
       SI.Current I_Na;
@@ -99,9 +98,8 @@ model Neuron "Model of a neuron"
       linear_ionic = params.Gm * V;
       // Linear model
       EFRT = (V + params.Vr) * params.FRT;
-      EFRT2 = EFRT * params.F;
       ex = exp(EFRT);
-      b = EFRT2 / (1 - ex);
+      b = EFRT * params.F / (1 - ex);
       I_Na = 1000.0 * PNAB * h.value * m.value ^ 2 * b * (params.C_Na_e - params.C_Na_i * ex);
       I_K = 1000.0 * params.PKB * n.value ^ 2 * b * (params.C_K_e - params.C_K_i * ex);
       I_P = 1000.0 * params.PPB * p.value ^ 2 * b * (params.C_Na_e - params.C_Na_i * ex);
