@@ -109,9 +109,9 @@ model Neuron "Model of a neuron"
       // However, this *still* doesn't quite work right, it should be uA cm-2
       // But the permeability constant is given in cm s-1, when the time unit is ms, so....
       // 1e6 (C 1000 ms) -> 1e9/1e3->1e6, ergo uA/cm-2
-      I_Na = 1000.0 * 1000.0 * PNAB * h.value * m.value ^ 2 * b * (params.C_Na_e - params.C_Na_i * ex);
-      I_K = 1000.0 * 1000.0 * params.PKB * n.value ^ 2 * b * (params.C_K_e - params.C_K_i * ex);
-      I_P = 1000.0 * 1000.0 * params.PPB * p.value ^ 2 * b * (params.C_Na_e - params.C_Na_i * ex);
+      I_Na = 1000.0 * 1000.0 * 1000.0 * PNAB * h.value * m.value ^ 2 * b * (params.C_Na_e - params.C_Na_i * ex);
+      I_K = 1000.0 * 1000.0 * 1000.0 * params.PKB * n.value ^ 2 * b * (params.C_K_e - params.C_K_i * ex);
+      I_P = 1000.0 * 1000.0 * 1000.0 * params.PPB * p.value ^ 2 * b * (params.C_Na_e - params.C_Na_i * ex);
       // SENN -> mS cm-2 mV -> uA cm-2
       I_L = params.leak_conductance_per_area * (V - params.Vl);
       // SENN -> mA cm-2

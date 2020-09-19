@@ -38,8 +38,8 @@ final record NeuronModelParameters "Parameters for the neuron model"
   constant SI.Voltage mV = 1;
   constant SI.Conductance mS = 1;
   constant SI.Temperature T = 295.16;
-  constant SI.Time s = 1;
-  constant SI.Time ms = 1e-3;
+  constant SI.Time s = 1e3;
+  constant SI.Time ms = 1;
   // Diameter of the nerve fiber
   parameter SI.Length fiber_diameter = 0.002 * cm;
   // Resitivity of the axoplasm
