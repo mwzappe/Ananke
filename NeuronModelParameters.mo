@@ -19,27 +19,27 @@ final record NeuronModelParameters "Parameters for the neuron model"
 */
   // Reset units to SENN defaults
   // SENN -> J K-1 mol-1 (?), mJ K-1 mmol-1
-  constant Real R = 8.3144;
+  constant Real R = Modelica.Constants.R;
   constant SI.Charge C = 1;
-  constant SI.AmountOfSubstance mol = 1e3;
-  constant SI.AmountOfSubstance mmol = 1;
+  constant SI.AmountOfSubstance mol = 1;
+  constant SI.AmountOfSubstance mmol = 1e-3;
   // Faraday ->  96485.33212... C mol−1
   // SENN -> 96.487 C mmol-1
-  constant Real F = Modelica.Constants.F * C / mol;
-  constant SI.Length cm = 1;
-  constant SI.Length um = 1e-4;
+  constant Real F = Modelica.Constants.F;
+  constant SI.Length cm = 1e-2;
+  constant SI.Length um = 1e-6;
   constant SI.Area cm2 = cm ^ 2;
   constant SI.Volume L = 1000.0 * cm ^ 3;
-  constant SI.Capacitance uF = 1;
+  constant SI.Capacitance uF = 1e-6;
   constant SI.Resistance Ohm = 1;
-  constant SI.Current A = 1e3;
-  constant SI.Current mA = 1;
-  constant SI.Voltage V = 1e3;
-  constant SI.Voltage mV = 1;
-  constant SI.Conductance mS = 1;
+  constant SI.Current A = 1;
+  constant SI.Current mA = 1e-3;
+  constant SI.Voltage V = 1;
+  constant SI.Voltage mV = 1e-3;
+  constant SI.Conductance mS = 1e-3;
   constant SI.Temperature T = 295.16;
-  constant SI.Time s = 1e3;
-  constant SI.Time ms = 1;
+  constant SI.Time s = 1;
+  constant SI.Time ms = 1e-3;
   // Diameter of the nerve fiber
   parameter SI.Length fiber_diameter = 0.002 * cm;
   // Resitivity of the axoplasm
@@ -48,8 +48,10 @@ final record NeuronModelParameters "Parameters for the neuron model"
   parameter SI.Resistivity exoplasm_resistivity = 300.0 * Ohm * cm;
   // Areal Capacitance of the neural membrane
   parameter SI.CapacitancePerArea membrane_capacitance_per_area = 2.0 * uF / cm2;
+  // Leak conductance base unit
+  constant Real base_leak_conductance_per_area = 30.365 * mS / cm2;
   // Leak conductance per unit area
-  parameter Real leak_conductance_per_area = 30.365 * mS / cm2;
+  parameter Real leak_conductance_per_area = base_leak_conductance_per_area;
   // Width of the Nodes of Ranvenier
   parameter SI.Length intranodal_gap = 2.5 * um;
   // Distance between nodes as a ratio to the fiber diameter
@@ -88,7 +90,7 @@ final record NeuronModelParameters "Parameters for the neuron model"
   SI.Conductance Gm = leak_conductance_per_area * node_area;
   // Gm doesn't factor into normal nodes
   // SENN -> 1000.0 * pi * cm^2 / (4 * Ohm * cm * cm) -> 1000.0 * S -> mS
-  SI.Conductance Ga = 1000.0 * pi * axon_diameter ^ 2 / (4 * axoplasm_resistivity * internodal_distance);
+  SI.Conductance Ga = pi * axon_diameter ^ 2 / (4 * axoplasm_resistivity * internodal_distance);
   // SENN has 1000 mult that makes little sense
   // SENN -> (C mmol-1) / (mJ K-1 mmol-1) / K -> C / mJ -> mV-1
   Real FRT = F / R / T;

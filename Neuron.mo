@@ -28,7 +28,7 @@ model Neuron "Model of a neuron"
       RealOutput Vtot "Total of Trans-membrane potential and external potential";
       SI.Voltage V;
       SI.Current linear_ionic;
-      Real PNAB = params.leak_conductance_per_area / 30.365 * params.basePNAB;
+      Real PNAB = params.leak_conductance_per_area / params.base_leak_conductance_per_area * params.basePNAB;
       Real EFRT;
 
       model perm_param_form_1
@@ -59,7 +59,7 @@ model Neuron "Model of a neuron"
         der(value) = 0;
       equation
         assert(value > (-100) and value < 100, "Parameter " + name + " out of bounds", AssertionLevel.warning);
-        der(value) = alpha.value * (1 - value) - beta.value * value;
+        der(value) = 1000.0 * (alpha.value * (1 - value) - beta.value * value);
       end perm_param;
 
       model perm_param2
@@ -72,21 +72,21 @@ model Neuron "Model of a neuron"
         der(value) = 0;
       equation
         assert(value > (-100) and value < 100, "Parameter " + name + " out of bounds", AssertionLevel.warning);
-        der(value) = alpha.value * (1 - value) - beta.value * value;
+        der(value) = 1000.0 * (alpha.value * (1 - value) - beta.value * value);
       end perm_param2;
 
-      perm_param m(name = "m", a0 = 0.36, a1 = V - 22, a2 = 3, b0 = 0.4, b1 = 13 - V, b2 = 20);
-      perm_param2 h(name = "h", a0 = 0.1, a1 = (-10) - V, a2 = 6, b0 = 4.5, b1 = 45 - V, b2 = 10);
-      perm_param n(name = "n", a0 = 0.02, a1 = V - 35, a2 = 10, b0 = 0.05, b1 = 10 - V, b2 = 10);
-      perm_param p(name = "p", a0 = 0.006, a1 = V - 40, a2 = 10, b0 = 0.09, b1 = (-25) - V, b2 = 20);
-      SI.Current I_Na;
-      SI.Current I_K;
-      SI.Current I_L;
-      SI.Current I_P;
+      perm_param m(name = "m", a0 = 0.36, a1 = 1000 * V - 22, a2 = 3, b0 = 0.4, b1 = 13 - 1000 * V, b2 = 20);
+      perm_param2 h(name = "h", a0 = 0.1, a1 = (-10) - 1000 * V, a2 = 6, b0 = 4.5, b1 = 45 - 1000 * V, b2 = 10);
+      perm_param n(name = "n", a0 = 0.02, a1 = 1000 * V - 35, a2 = 10, b0 = 0.05, b1 = 10 - 1000 * V, b2 = 10);
+      perm_param p(name = "p", a0 = 0.006, a1 = 1000 * V - 40, a2 = 10, b0 = 0.09, b1 = (-25) - 1000 * V, b2 = 20);
+      SI.CurrentDensity I_Na;
+      SI.CurrentDensity I_K;
+      SI.CurrentDensity I_L;
+      SI.CurrentDensity I_P;
       Real ex;
       Real b;
-      Real total_ionic;
-      Real tim;
+      SI.Current total_ionic;
+      SI.Current tim;
     initial equation
       V = 0;
     equation
@@ -109,17 +109,17 @@ model Neuron "Model of a neuron"
       // However, this *still* doesn't quite work right, it should be uA cm-2
       // But the permeability constant is given in cm s-1, when the time unit is ms, so....
       // 1e6 (C 1000 ms) -> 1e9/1e3->1e6, ergo uA/cm-2
-      I_Na = 1000.0 * 1000.0 * 1000.0 * PNAB * h.value * m.value ^ 2 * b * (params.C_Na_e - params.C_Na_i * ex);
-      I_K = 1000.0 * 1000.0 * 1000.0 * params.PKB * n.value ^ 2 * b * (params.C_K_e - params.C_K_i * ex);
-      I_P = 1000.0 * 1000.0 * 1000.0 * params.PPB * p.value ^ 2 * b * (params.C_Na_e - params.C_Na_i * ex);
+      I_Na = PNAB * h.value * m.value ^ 2 * b * (params.C_Na_e - params.C_Na_i * ex);
+      I_K = params.PKB * n.value ^ 2 * b * (params.C_K_e - params.C_K_i * ex);
+      I_P = params.PPB * p.value ^ 2 * b * (params.C_Na_e - params.C_Na_i * ex);
       // SENN -> mS cm-2 mV -> uA cm-2
       I_L = params.leak_conductance_per_area * (V - params.Vl);
       // SENN -> mA cm-2
-      total_ionic = I_Na + I_K + I_P + I_L;
+      total_ionic = params.node_area * (I_Na + I_K + I_P + I_L);
       // SENN -> mS mV -> uA
       tim = params.Ga * (right - 2 * Vtot + left);
       // SENN -> (mA - cm2 * (mA cm-2)) / uF -> 1e6 V/s
-      der(V) = (tim - params.node_area * total_ionic) / params.Cm;
+      der(V) = (tim - total_ionic) / params.Cm;
     end Node;
 
     SI.Voltage center_diff;

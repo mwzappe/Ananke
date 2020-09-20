@@ -1,10 +1,10 @@
 model TwoElectrodeStimulus "Stimulus Created by two electrodes"
   import pi = Modelica.Constants.pi;
   import SI = Modelica.SIunits;
-  parameter SI.Length x_anode = 100;
-  parameter SI.Length y_anode = 100;
-  parameter SI.Length x_cathode = 0.000;
-  parameter SI.Length y_cathode = 1;
+  parameter SI.Length x_anode = 100 * params.cm;
+  parameter SI.Length y_anode = 100 * params.cm;
+  parameter SI.Length x_cathode = 0.000 * params.cm;
+  parameter SI.Length y_cathode = 1 * params.cm;
   input SI.Current I;
   parameter NeuronModelParameters params;
   output SI.Voltage V[params.Nnodes];
